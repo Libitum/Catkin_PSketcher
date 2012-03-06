@@ -70,9 +70,8 @@ AdapterView.OnItemSelectedListener, ViewSwitcher.ViewFactory {
 				//arg0.setDrawingCacheEnabled(true);
 				//Bitmap img=arg0.getDrawingCache(false);//如果不设置为true 则图片和屏幕的显示大小一样
 			    Bitmap img = BitmapFactory.decodeFile(photoURL);
-				Bitmap img2=Sketcher.toSketcher(img);
-				
 				try {
+					Bitmap img2=Sketcher.toSketcher(img);
 					IO.saveBitmap(img2,photoURL+"Sketcher.png");
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
