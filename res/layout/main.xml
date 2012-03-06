@@ -19,6 +19,7 @@
         android:layout_alignParentLeft="true"
         android:gravity="center_vertical"
         android:spacing="10dp"
+        
     />
 
 </RelativeLayout>

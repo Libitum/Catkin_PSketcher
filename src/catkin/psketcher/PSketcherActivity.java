@@ -1,20 +1,15 @@
 package catkin.psketcher;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import catkin.psketcher.IO.IO;
 import catkin.psketcher.image.Sketcher;
 import android.app.Activity;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -23,9 +18,7 @@ import android.widget.AdapterView;
 import android.widget.Gallery;
 import android.widget.ImageSwitcher;
 import android.widget.ImageView;
-import android.widget.Toast;
 import android.widget.ViewSwitcher;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Gallery.LayoutParams;
 
 public class PSketcherActivity extends Activity implements

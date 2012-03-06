@@ -2,19 +2,8 @@ package catkin.psketcher;
 
 import java.util.List;
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.LinearGradient;
-import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.Bitmap.Config;
-import android.graphics.PorterDuff.Mode;
-import android.graphics.Rect;
-import android.graphics.Shader.TileMode;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
@@ -51,7 +40,6 @@ public class ImageAdapter extends BaseAdapter {
 		 imageView.setAdjustViewBounds(true);
 		 imageView.setLayoutParams(new Gallery.LayoutParams(
 		     LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-		 imageView.setBackgroundResource(R.drawable.bg);
 		 
 		return imageView;
 	}
