@@ -9,6 +9,11 @@ import android.graphics.Color;
  * @author Libitum(libitum@about.me)
  */
 public class Sketcher {
+	/**
+	 * Convert the image to sketcher
+	 * @param img Bitmap of origin image
+	 * @return Bitmap of sketcher
+	 */
 	public static Bitmap toSketcher(final Bitmap img){
 		int w = img.getWidth();
 		int h = img.getHeight();
@@ -97,6 +102,10 @@ public class Sketcher {
 		return gaussImg;
 	}
 	
+	/**
+	 * @param img Bitmap of gray image
+	 * @return Bitmap of gauss image with gauss radius 5
+	 */
 	private static Bitmap gray2Gauss(final Bitmap img){
 		return Sketcher.gray2Gauss(img, 5);
 	}
