@@ -5,8 +5,8 @@ import android.graphics.Bitmap.Config;
 import android.graphics.Color;
 
 /**
- * @author Libitum(libitum@about.com)
- *
+ * This is a static class to convert the origin photo to sketcher.
+ * @author Libitum(libitum@about.me)
  */
 public class Sketcher {
 	public static Bitmap toSketcher(final Bitmap img){
@@ -16,34 +16,31 @@ public class Sketcher {
 		Bitmap fgImg = Sketcher.gray2Gauss(bgImg);
 		for(int i=0; i<w; i++){
 			for(int j=0; j<h; j++){
-				int color;
-				if(fgImg.getPixel(i, j) > 255){
-					color = 255;
-				}
-				else{
-					color = Math.min(bgImg.getPixel(i, j) * 255 
-							/ (255 - fgImg.getPixel(i, j)),255);
-				}
-				img.setPixel(i, j, color);
+				int gray;
+				gray = Math.min(Color.red(bgImg.getPixel(i, j)) * 255 
+						/ (255 - Color.red(fgImg.getPixel(i, j))),255);
+				img.setPixel(i, j, Color.rgb(gray, gray, gray));
 			}
 		}
 		
 		return img;
 	}
 	/**
-	 * @param img
-	 * @return
+	 * Convert the origin photo to gray image.
+	 * @param img Bitmap of origin photo
+	 * @return bitmap of gray image
 	 */
 	private static Bitmap origin2Gray(final Bitmap img){
 		int w = img.getWidth();
 		int h = img.getHeight();
-		Bitmap grayImg = Bitmap.createBitmap(w, h, Config.ARGB_8888);
+		Bitmap grayImg = Bitmap.createBitmap(w, h, Config.RGB_565);
 		for(int i=0; i<w; i++){
 			for(int j=0; j<h; j++){
 				int color = img.getPixel(i, j);
-				float grayColor = Color.blue(color) * 0.114f + Color.green(color) * 0.587f
-						+ Color.red(color) * 0.299f;
-				grayImg.setPixel(i, j, (int)grayColor);
+				int gray = (int)(Color.red(color) * 0.299f + Color.green(color) 
+						* 0.587f + Color.blue(color) * 0.114f);
+				int grayColor = Color.rgb(gray, gray, gray);
+				grayImg.setPixel(i, j, grayColor);
 			}
 		}
 		return grayImg;
@@ -51,29 +48,30 @@ public class Sketcher {
 	
 
 	/**
-	 * @param img
-	 * @param k
-	 * @return
+	 * Convert the gray image to Gauss image
+	 * @param img Bitmap of gray image
+	 * @param k Gauss radius.
+	 * @return Bitmap of Gauss image
 	 */
 	private static Bitmap gray2Gauss(final Bitmap img, final int k){
 		int w = img.getWidth();
 		int h = img.getHeight();
-		Bitmap gaussImg = Bitmap.createBitmap(w, h, Config.ARGB_8888);
-		//计算高斯核
+		Bitmap gaussImg = Bitmap.createBitmap(w, h, Config.RGB_565);
+		//calculate gauss kernel
 		float sigma = (k/2.0f-1f)*0.3f + 0.8f;
-		float[][] gaussKernal = new float[2*k+1][2*k+1];
+		float[][] gaussKernel = new float[2*k+1][2*k+1];
 		for(int i=0; i<=2*k+1; i++){
 			for(int j=0; j<2*k+1; j++){
 				float xDistance = (i-k) * (i-k);
 				float yDistance = (j-k) * (j-k);
-				gaussKernal[i][j] = (float)Math.exp(-(xDistance + yDistance)
+				gaussKernel[i][j] = (float)Math.exp(-(xDistance + yDistance)
 						/ (2f*sigma*sigma)) / (2f*sigma*sigma*(float)Math.PI);
 			}
 		}
-		//进行高斯滤波
+		//do gauss filter
 		for(int i=0; i<w; i++){
 			for(int j=0; j<h; j++){
-				float color = 0f;
+				float gray = 0f;
 				for(int ii=0; ii<2*k+1; ii++){
 					if(i-k+ii<0){
 						ii = k - i;
@@ -88,10 +86,11 @@ public class Sketcher {
 						else if(j-k+jj>=h){
 							break;
 						}
-						color += (255f - img.getPixel(i-k+ii, j-k+jj)) * gaussKernal[ii][jj];
+						int c = img.getPixel(i-k+ii, j-k+jj);
+						gray += (255f - Color.red(c)) * gaussKernel[ii][jj];
 					}
 				}
-				gaussImg.setPixel(i, j, (int)color);
+				gaussImg.setPixel(i, j, Color.rgb((int)gray, (int)gray, (int)gray));
 			}
 		}
 		
