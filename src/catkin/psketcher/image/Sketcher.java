@@ -19,16 +19,17 @@ public class Sketcher {
 		int h = img.getHeight();
 		Bitmap bgImg = Sketcher.origin2Gray(img);
 		Bitmap fgImg = Sketcher.gray2Gauss(bgImg);
+		Bitmap sketcherImg = Bitmap.createBitmap(w, h, Config.RGB_565);
 		for(int i=0; i<w; i++){
 			for(int j=0; j<h; j++){
 				int gray;
 				gray = Math.min(Color.red(bgImg.getPixel(i, j)) * 255 
 						/ (255 - Color.red(fgImg.getPixel(i, j))),255);
-				img.setPixel(i, j, Color.rgb(gray, gray, gray));
+				sketcherImg.setPixel(i, j, Color.rgb(gray, gray, gray));
 			}
 		}
 		
-		return img;
+		return sketcherImg;
 	}
 	/**
 	 * Convert the origin photo to gray image.
