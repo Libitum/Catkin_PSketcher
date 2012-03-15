@@ -3,6 +3,7 @@ package catkin.psketcher.image;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Color;
+import android.util.Log;
 
 /**
  * This is a static class to convert the origin photo to sketcher.
@@ -66,13 +67,14 @@ public class Sketcher {
 		//calculate gauss kernel
 		float sigma = (k/2.0f-1f)*0.3f + 0.8f;
 		float[][] gaussKernel = new float[2*k+1][2*k+1];
-		for(int i=0; i<=2*k+1; i++){
+		for(int i=0; i<2*k+1; i++){
 			for(int j=0; j<2*k+1; j++){
 				float xDistance = (i-k) * (i-k);
 				float yDistance = (j-k) * (j-k);
 				gaussKernel[i][j] = (float)Math.exp(-(xDistance + yDistance)
 						/ (2f*sigma*sigma)) / (2f*sigma*sigma*(float)Math.PI);
 			}
+			Log.d("adf", i+"");
 		}
 		//do gauss filter
 		for(int i=0; i<w; i++){

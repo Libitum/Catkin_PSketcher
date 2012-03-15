@@ -1,4 +1,4 @@
-package catkin.psketcher.IO;
+package catkin.psketcher;
 
 import java.io.File;
 import java.io.FileNotFoundException;
