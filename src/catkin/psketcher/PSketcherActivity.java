@@ -3,7 +3,11 @@ package catkin.psketcher;
 
 import java.io.IOException;
 import java.util.List;
+import catkin.frame.FrameWork;
+import catkin.frame.EnumClass.Device;
 import catkin.psketcher.image.Sketcher;
+import catkin.psketcher.serializable.SerialBitmap;
+import catkin.util.BytesBitmap;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -25,12 +29,11 @@ import android.widget.AdapterView;
 import android.widget.Gallery;
 import android.widget.ImageSwitcher;
 import android.widget.ImageView;
-import android.widget.Toast;
 import android.widget.ViewSwitcher;
 import android.widget.Gallery.LayoutParams;
 
 public class PSketcherActivity extends Activity implements
-AdapterView.OnItemSelectedListener, ViewSwitcher.ViewFactory {
+AdapterView.OnItemClickListener,AdapterView.OnItemSelectedListener, ViewSwitcher.ViewFactory {
     /** Called when the activity is first created. */
 	/**
 	 * 手机设备中图像列表
@@ -42,6 +45,7 @@ AdapterView.OnItemSelectedListener, ViewSwitcher.ViewFactory {
 	private int sign=1;  
 	private Dialog mDialog;
 	private Context mContext;
+	private FrameWork Fw;
 	
 	 	
     @Override
@@ -49,10 +53,11 @@ AdapterView.OnItemSelectedListener, ViewSwitcher.ViewFactory {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         mContext=this;
+        Fw=FrameWork.getInstance(mContext,this.toString());
         
         /*
          * 获取mSwitcher变量以及它的设置参数
-         */
+         */     
         mSwitcher = (ImageSwitcher) findViewById(R.id.switcher);
 		mSwitcher.setFactory(this); 
 	    mSwitcher.setInAnimation(AnimationUtils.loadAnimation(this,android.R.anim.slide_in_left));
@@ -60,8 +65,7 @@ AdapterView.OnItemSelectedListener, ViewSwitcher.ViewFactory {
 		
 		/*
 		 * 从sd卡指定路径获取图片
-		 */
-		
+		 */	
 		ImageList = IO.getImagesFromSD("/sdcard/");
 		
 		/*
@@ -81,18 +85,7 @@ AdapterView.OnItemSelectedListener, ViewSwitcher.ViewFactory {
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
 				//arg0.setDrawingCacheEnabled(true);
-				//Bitmap img=arg0.getDrawingCache(false);//如果不设置为true 则图片和屏幕的显示大小一样
-				/*String path=null;
-				if(frJudge(1,"dealPicture",photoURL))
-				{
-			      path=dealPicture(photoURL);
-			      frPut(path);
-				}
-				 mSwitcher.setImageURI(Uri.parse(frGet(path)));
-				 */
-				/*String path=dealPicture(photoURL);
-				mSwitcher.setImageURI(Uri.parse(path));*/
-			
+				//Bitmap img=arg0.getDrawingCache(false);//如果不设置为true 则图片和屏幕的显示大小一样	
 			if(sign==0)
 			{
 				return;
@@ -102,19 +95,26 @@ AdapterView.OnItemSelectedListener, ViewSwitcher.ViewFactory {
 			 * 显示等待图片
 			 */
 			showWaitingPicture(mContext, R.layout.loading_process_dialog_color);
+			
 			/*
 			 * 创建一个线程用来处理图片
 			 */
 			Thread sketcherThread = new Thread()
 				{
+				
 					public void run()
 					{
-					 String path=dealPicture(photoURL);	
-					  Message msg = new Message();
-	                  msg.obj = path;
+					    Log.d("liuna", "Enter Thread");
+						if(Fw.judge(Device.CLOUD))
+						{		
+					      Bitmap img=dealPicture(photoURL);
+					      byte[]BitmapBytes=BytesBitmap.getBytes(img);
+					      Fw.putValue("BitmapBytes",BitmapBytes);
+						}
+					   Message msg = new Message();
+	                   msg.obj = Fw.getValue("BitmapBytes");//test
 	                   msg.what = 0;
 	                   handler.sendMessage(msg);
-
 					}
 				};
 			sketcherThread.start();
@@ -123,18 +123,26 @@ AdapterView.OnItemSelectedListener, ViewSwitcher.ViewFactory {
 			 * 处理线程发过来的消息	，显示处理后的图片
 			 */
 			handler = new Handler() {
-
 			            @Override
 			            public void handleMessage(Message msg) {
+			            	Log.d("liuna","App Enter Message Handler");
 			                switch (msg.what) {
 			                case 0:
+			                	try{
+			                		
 			                	mDialog.dismiss();
-			                	mSwitcher.setImageURI(Uri.parse(msg.obj.toString()));	
+			                	String path=save(BytesBitmap.getBitmap((byte[])(msg.obj)), photoURL);
+			                	mSwitcher.setImageURI(Uri.parse(path));     	
+			                	}
+			                	catch(Exception e)
+			                	{
+			                		Log.d("liuna","Handler："+e.toString());
+			                	}
+			                	
 			                }
 			            }
 
 			        };
-			       
 			sign=1;
 			}
 			});
@@ -177,19 +185,29 @@ AdapterView.OnItemSelectedListener, ViewSwitcher.ViewFactory {
 		
 	}
    
-	public String dealPicture(String s)
-    {
+	/*
+	 * 处理图片
+	 */
+  public Bitmap dealPicture(String s)
+	{
 		 Bitmap img = BitmapFactory.decodeFile(s);
-			try {
-				Bitmap img2=Sketcher.toSketcher(img);
-				IO.saveBitmap(img2,s+"Sketcher.png");
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				Log.e("liuna",e.toString());
-			}
+		 return Sketcher.toSketcher(img);
+	}
+	
+    public String save(Bitmap img,String s)
+	{
+		try
+		{
+			IO.saveBitmap(img,s+"Sketcher.png");
 			return s+"Sketcher.png";
-      }
-    
+		}catch(IOException e)
+		{
+			Log.d("liuna",e.toString());
+			return null;
+		}
+		
+	}
+	  
 	/*
 	 * 显示等待动画
 	 */
@@ -203,18 +221,29 @@ AdapterView.OnItemSelectedListener, ViewSwitcher.ViewFactory {
                return false;
             }
         };
-
         mDialog = new AlertDialog.Builder(mContext).create();
         mDialog.setOnKeyListener(keyListener);
-        try{
-            mDialog.show();
-            }
-            catch(Exception e)
-            {
-            	Log.e("liuna",e.toString());
-            }
-            	
+        mDialog.show();
         mDialog.setContentView(layout);
-             
     }
+
+	
+	/*
+	 * (non-Javadoc)
+	 * @see android.widget.AdapterView.OnItemClickListener#onItemClick(android.widget.AdapterView, android.view.View, int, long)
+	 */
+	@Override
+	public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
+		// TODO Auto-generated method stub
+		/**
+		 * 获取当前要显示的Image的路径
+		 */
+		photoURL = ImageList.get(position-5);
+		Log.i("A", String.valueOf(position));
+		/**
+		 * 设置当前要显示的Image的路径	 
+		 */
+		mSwitcher.setImageURI(Uri.parse(photoURL));
+		
+	}
 }
