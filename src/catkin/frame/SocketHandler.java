@@ -18,7 +18,7 @@ public class SocketHandler {
 	public SocketHandler(Device device)
 	{
 		if(device==Device.MOBILE)
-		this.ip="192.168.2.146";
+		this.ip="192.168.1.132";
 		else 
 		this.ip="127.0.0.1";
 	}

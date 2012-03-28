@@ -5,10 +5,13 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import android.graphics.Bitmap;
 import android.os.Environment;
+import android.util.Log;
 
 
 
@@ -39,10 +42,10 @@ public class IO {
 	public static  List<String> getImagesFromSD(String path) {
 		List<String> imageList = new ArrayList<String>();
 
-		File f = new File(path);
+		File f = null;
 		if(Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED))
 		{
-			f = new File(Environment.getExternalStorageDirectory().toString());
+			f = new File(Environment.getExternalStorageDirectory().toString()+path);//获取文件路径
 		}
 		else
 		{
@@ -61,18 +64,27 @@ public class IO {
 			if (isImageFile(file.getPath()))
 				imageList.add(file.getPath());
 		}
+		Sort sort=new Sort();
+		Collections.sort(imageList, sort); 
 		return imageList;
 	}
 
-	 public static void saveBitmap(Bitmap bitmap,String path) throws IOException
+	 public static void saveBitmap(Bitmap bitmap,String path,String name) throws IOException
 	    {
-	    	 File f = new File(path);
+		     Log.d("liuna","enter saveBitmap");
+		     File fileDir=new File(path);
+		     if(!fileDir.exists())
+		     {
+		    	 fileDir.mkdir();
+		     }
+		     Log.d("liuna","创建目录成功");
+	    	 File f = new File(path+name);
 	         f.createNewFile();
 	         FileOutputStream fOut = null;
 	         try {
 	                 fOut = new FileOutputStream(f);
 	         } catch (FileNotFoundException e) {
-	                 e.printStackTrace();
+	                Log.d("liuna",e.toString());
 	         }
 	         bitmap.compress(Bitmap.CompressFormat.PNG, 100, fOut);
 	         try {
@@ -88,5 +100,13 @@ public class IO {
 
 	    }
 
+	 
+}
 
+class Sort implements Comparator<String>
+{
+	  public int compare(String o1, String o2) 
+	  {
+	    return -(o1.compareTo(o2));//按照长度比较
+	  }
 }

@@ -6,7 +6,6 @@ import java.util.List;
 import catkin.frame.FrameWork;
 import catkin.frame.EnumClass.Device;
 import catkin.psketcher.image.Sketcher;
-import catkin.psketcher.serializable.SerialBitmap;
 import catkin.util.BytesBitmap;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -31,7 +30,6 @@ import android.widget.ImageSwitcher;
 import android.widget.ImageView;
 import android.widget.ViewSwitcher;
 import android.widget.Gallery.LayoutParams;
-
 public class PSketcherActivity extends Activity implements
 AdapterView.OnItemClickListener,AdapterView.OnItemSelectedListener, ViewSwitcher.ViewFactory {
     /** Called when the activity is first created. */
@@ -66,7 +64,7 @@ AdapterView.OnItemClickListener,AdapterView.OnItemSelectedListener, ViewSwitcher
 		/*
 		 * 从sd卡指定路径获取图片
 		 */	
-		ImageList = IO.getImagesFromSD("/sdcard/");
+		ImageList = IO.getImagesFromSD("/pic");//参数是相对于sd卡的路径
 		
 		/*
 		 * 获取gallery并设置适配器
@@ -128,10 +126,10 @@ AdapterView.OnItemClickListener,AdapterView.OnItemSelectedListener, ViewSwitcher
 			            	Log.d("liuna","App Enter Message Handler");
 			                switch (msg.what) {
 			                case 0:
-			                	try{
-			                		
+			                	try{		
 			                	mDialog.dismiss();
-			                	String path=save(BytesBitmap.getBitmap((byte[])(msg.obj)), photoURL);
+			                	String path=save(BytesBitmap.getBitmap((byte[])(msg.obj)), photoURL,"/sdcard/pic/sketcherPic/",null);
+			                	Log.d("liuna","path");
 			                	mSwitcher.setImageURI(Uri.parse(path));     	
 			                	}
 			                	catch(Exception e)
@@ -145,6 +143,7 @@ AdapterView.OnItemClickListener,AdapterView.OnItemSelectedListener, ViewSwitcher
 			        };
 			sign=1;
 			}
+			
 			});
 		
     }
@@ -188,18 +187,42 @@ AdapterView.OnItemClickListener,AdapterView.OnItemSelectedListener, ViewSwitcher
 	/*
 	 * 处理图片
 	 */
-  public Bitmap dealPicture(String s)
+   public Bitmap dealPicture(String s)
 	{
 		 Bitmap img = BitmapFactory.decodeFile(s);
 		 return Sketcher.toSketcher(img);
 	}
 	
-    public String save(Bitmap img,String s)
+   public String save(Bitmap img,String src,String destDir,String name)
 	{
 		try
 		{
-			IO.saveBitmap(img,s+"Sketcher.png");
-			return s+"Sketcher.png";
+			Log.d("liuna","src:"+src);
+			int P1=0,P2=0,i=0;
+			int state=0;
+			String destPath=null;
+			if(name==null)
+			{
+				for(i=src.length()-1;i>0;i--)
+				{
+					if(state==0&&src.charAt(i)=='.')
+						{
+						P2=i;
+						state=1;
+						continue;
+						}
+					if(state==1&&src.charAt(i)=='/')
+						{
+						P1=i;
+						break;
+						}
+				 }
+		         name=src.substring(P1+1,P2)+"Sketcher.png";
+			}
+			destPath=destDir+name;
+			IO.saveBitmap(img,destDir,name);
+			return destPath;
+	
 		}catch(IOException e)
 		{
 			Log.d("liuna",e.toString());
@@ -228,10 +251,7 @@ AdapterView.OnItemClickListener,AdapterView.OnItemSelectedListener, ViewSwitcher
     }
 
 	
-	/*
-	 * (non-Javadoc)
-	 * @see android.widget.AdapterView.OnItemClickListener#onItemClick(android.widget.AdapterView, android.view.View, int, long)
-	 */
+	
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
 		// TODO Auto-generated method stub
