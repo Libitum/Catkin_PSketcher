@@ -1,14 +1,11 @@
 package catkin.psketcher.massageListener;
 
-import java.io.IOException;
-
 import catkin.frame.FrameWork;
 import catkin.frame.EnumClass.Device;
 import catkin.psketcher.PSketcherActivity;
 import catkin.psketcher.R;
 import catkin.psketcher.image.Sketcher;
 import catkin.psketcher.util.BytesBitmap;
-import catkin.psketcher.util.IO;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -16,7 +13,7 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnKeyListener;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -24,9 +21,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageSwitcher;
-import android.widget.ImageView;
-import android.widget.Gallery.LayoutParams;
-import android.widget.ViewSwitcher.ViewFactory;
+
 
 public class ImageSwitcherListener implements OnClickListener
 {
@@ -71,13 +66,14 @@ public class ImageSwitcherListener implements OnClickListener
 				{
 				    Log.d("liuna", "Enter Thread");
 					if(Fw.judge(Device.CLOUD))
-					{		
-				      Bitmap img=dealPicture(mActivity.photoURL);
+					{	
+					 Log.d("liuna","positon:"+mActivity.position);
+				      Bitmap img=dealPicture(mActivity.position);
 				      byte[]BitmapBytes=BytesBitmap.getBytes(img);
-				      Fw.putValue("BitmapBytes",BitmapBytes);
+				      Fw.putValue("BitmapBytes"+mActivity.position,BitmapBytes);
 					}
 				   Message msg = new Message();
-                   msg.obj = Fw.getValue("BitmapBytes");//test
+                   msg.obj = Fw.getValue("BitmapBytes"+mActivity.position);
                    msg.what = 0;
                    handler.sendMessage(msg);
 				}
@@ -100,9 +96,9 @@ public class ImageSwitcherListener implements OnClickListener
 		                	{	
 		                	
 		                	mDialog.dismiss();
-		                	String path=save(BytesBitmap.getBitmap((byte[])(msg.obj)), mActivity.photoURL, "/sdcard/pic/sketcherPic/",null);
-		                	Log.d("liuna","path");
-		                	mSwitcher.setImageURI(Uri.parse(path));   
+		                	Log.d("liuna","path"); 	  
+		                	BitmapDrawable drawable=new BitmapDrawable(BytesBitmap.getBitmap((byte[])(msg.obj))); 
+		                	mSwitcher.setImageDrawable(drawable);
 		                	
 		                	}
 		                	catch(Exception e)
@@ -139,49 +135,12 @@ public class ImageSwitcherListener implements OnClickListener
 	/*
 	 * 处理图片
 	 */
-   private Bitmap dealPicture(String s)
+   private Bitmap dealPicture(int position)
 	{
-		 Bitmap img = BitmapFactory.decodeFile(s);
-		 return Sketcher.toSketcher(img);
+		 //Bitmap img = BitmapFactory.decodeFile(s);
+	     Log.d("liuna","position:"+mActivity.position);
+	     Bitmap img=BitmapFactory.decodeResource(mContext.getResources(),mActivity.resourceList.get(mActivity.position) );
+		 return Sketcher.toSketcher(img);	 
 	}
 	
-   private String save(Bitmap img,String src,String destDir,String name)
-	{
-		try
-		{
-			Log.d("liuna","src:"+src);
-			int P1=0,P2=0,i=0;
-			int state=0;
-			String destPath=null;
-			if(name==null)
-			{
-				for(i=src.length()-1;i>0;i--)
-				{
-					if(state==0&&src.charAt(i)=='.')
-						{
-						P2=i;
-						state=1;
-						continue;
-						}
-					if(state==1&&src.charAt(i)=='/')
-						{
-						P1=i;
-						break;
-						}
-				 }
-		         name=src.substring(P1+1,P2)+"Sketcher.png";
-			}
-			destPath=destDir+name;
-			IO.saveBitmap(img,destDir,name);
-			return destPath;
-	
-		}catch(IOException e)
-		{
-			Log.d("liuna",e.toString());
-			return null;
-		}
-		
-	}
-	  
-
 }

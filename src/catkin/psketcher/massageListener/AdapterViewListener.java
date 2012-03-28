@@ -3,7 +3,6 @@ package catkin.psketcher.massageListener;
 import java.util.List;
 
 import catkin.psketcher.PSketcherActivity;
-import android.net.Uri;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -12,14 +11,14 @@ import android.widget.ImageSwitcher;
 public class AdapterViewListener implements AdapterView.OnItemClickListener 
 {
 	
-	private List<String> ImageList;
+	private List<Integer> ImageList;
 	private ImageSwitcher mSwitcher;
 	private PSketcherActivity mActivity;
 	
 	public AdapterViewListener(PSketcherActivity activity)
 	{
 		mActivity=activity;
-		ImageList=mActivity.ImageList;
+		ImageList=mActivity.resourceList;
 		mSwitcher=mActivity.mSwitcher;
 		
 	}
@@ -31,12 +30,13 @@ public class AdapterViewListener implements AdapterView.OnItemClickListener
 		/**
 		 * 获取当前要显示的Image的路径
 		 */
-		mActivity.photoURL = ImageList.get(position);
+		mActivity.position = position;
 		Log.i("A", String.valueOf(position));
 		/**
 		 * 设置当前要显示的Image的路径	 
 		 */
-		mSwitcher.setImageURI(Uri.parse(mActivity.photoURL));
+		//mSwitcher.setImageURI(Uri.parse(mActivity.photoURL));
+		 mSwitcher.setImageResource(ImageList.get(position));
 		
 	}
 

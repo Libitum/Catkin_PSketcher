@@ -25,7 +25,7 @@ public class Sketcher {
 			for(int j=0; j<h; j++){
 				int gray;
 				gray = Math.min(Color.red(bgImg.getPixel(i, j)) * 255 
-						/ (255 - Color.red(fgImg.getPixel(i, j))),255);
+						/ (256 - Color.red(fgImg.getPixel(i, j))),255);
 				sketcherImg.setPixel(i, j, Color.rgb(gray, gray, gray));
 			}
 		}

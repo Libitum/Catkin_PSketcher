@@ -4,6 +4,7 @@ import java.util.List;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
@@ -21,28 +22,38 @@ public class ImageAdapter extends BaseAdapter {
 	/**
 	 * 图像路径列表
 	 */
-	private List<String> lis;
+	private List<Integer> lis;
 	private Context mContext;
 	
-	public ImageAdapter(Context c,  List<String> li) {
+	public ImageAdapter(Context c,  List<Integer> li) {
 		mContext = c;
 		lis = li;
 	}
 	/*
 	 * 绘制缩略图
 	 */
-	public ImageView createThumb(String filePath) {
-
+	/*public ImageView createThumbFromSdcard(int position) {
+         String filePath=lis.get(position);
 		 Bitmap originalImage = BitmapFactory.decodeFile(filePath);
 		 ImageView imageView = new ImageView(mContext);
 		 imageView.setImageBitmap(originalImage);
+		 imageView.setAdjustViewBounds(true);
+		 imageView.setLayoutParams(new Gallery.LayoutParams(
+		     LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));	 
+		return imageView;
+	}*/
+	
+	public ImageView createThumbFromResource(int position) {
+
+		 ImageView imageView = new ImageView(mContext);
+		 Log.d("liuna","positon 的值是："+position);
+		 imageView.setImageResource(lis.get(position));
 		 imageView.setAdjustViewBounds(true);
 		 imageView.setLayoutParams(new Gallery.LayoutParams(
 		     LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 		 
 		return imageView;
 	}
-	
 	
 	@Override
 	public int getCount() {
@@ -58,6 +69,6 @@ public class ImageAdapter extends BaseAdapter {
 	}
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		return createThumb(lis.get(position));
+		return createThumbFromResource(position);
 	}
 }

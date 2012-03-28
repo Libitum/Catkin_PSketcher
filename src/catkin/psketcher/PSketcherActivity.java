@@ -7,6 +7,7 @@ import catkin.psketcher.util.IO;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.Gallery;
@@ -21,12 +22,12 @@ public class PSketcherActivity extends Activity implements ViewFactory
 	/**
 	 * 手机设备中图像列表
 	 */
-	public List<String> ImageList;
+	public List<String> pathList;
+	public List<Integer>resourceList;
 	public ImageSwitcher mSwitcher;
-	public String photoURL;            //保存当前图片文件路径
+	public Integer position;            //保存当前图片文件路径
 	public Context mContext;
-	
-	 	
+		 	
     @Override
     public void onCreate(Bundle savedInstanceState) 
     {
@@ -42,18 +43,15 @@ public class PSketcherActivity extends Activity implements ViewFactory
 	    mSwitcher.setInAnimation(AnimationUtils.loadAnimation(this,android.R.anim.slide_in_left));
 		mSwitcher.setOutAnimation(AnimationUtils.loadAnimation(this,android.R.anim.slide_out_right));
 		
-		/*
-		 * 从sd卡指定路径获取图片
-		 */	
-		ImageList = IO.getImagesFromSD("/pic");//参数是相对于sd卡的路径
-		
+		resourceList=IO.getImagesFromResource();//从资源中获得图片	
+		Log.d("liuna","从资源中获得图片完成");
 		/*
 		 * 获取gallery并设置适配器
 		 */
 		Gallery g = (Gallery) findViewById(R.id.gallery);
-		if(ImageList == null || ImageList.size() == 0)
+		if(resourceList== null || resourceList.size() == 0)
 			return;
-		g.setAdapter(new ImageAdapter(this, ImageList));
+		g.setAdapter(new ImageAdapter(this, resourceList));
 		
 		/*
 		 * 监听adaperView接收到的消息
@@ -63,8 +61,8 @@ public class PSketcherActivity extends Activity implements ViewFactory
 		/*
 		 * 监听imageSwitcher的单击事件
 		 */
+		mSwitcher.setImageResource(resourceList.get(0));
 		mSwitcher.setOnClickListener(new ImageSwitcherListener(this));
-		
     }
 
 

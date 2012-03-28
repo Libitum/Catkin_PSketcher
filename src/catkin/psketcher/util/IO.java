@@ -9,11 +9,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import catkin.psketcher.R;
+
 import android.graphics.Bitmap;
 import android.os.Environment;
 import android.util.Log;
-
-
 
 public class IO {
 	
@@ -69,7 +69,7 @@ public class IO {
 		return imageList;
 	}
 
-	 public static void saveBitmap(Bitmap bitmap,String path,String name) throws IOException
+    public static void saveBitmap(Bitmap bitmap,String path,String name) throws IOException
 	    {
 		     Log.d("liuna","enter saveBitmap");
 		     File fileDir=new File(path);
@@ -99,7 +99,57 @@ public class IO {
 	         }
 
 	    }
-
+    
+    private String save(Bitmap img,String src,String destDir,String name)
+   	{
+   		try
+   		{
+   			Log.d("liuna","src:"+src);
+   			int P1=0,P2=0,i=0;
+   			int state=0;
+   			String destPath=null;
+   			if(name==null)
+   			{
+   				for(i=src.length()-1;i>0;i--)
+   				{
+   					if(state==0&&src.charAt(i)=='.')
+   						{
+   						P2=i;
+   						state=1;
+   						continue;
+   						}
+   					if(state==1&&src.charAt(i)=='/')
+   						{
+   						P1=i;
+   						break;
+   						}
+   				 }
+   		         name=src.substring(P1+1,P2)+"Sketcher.png";
+   			}
+   			destPath=destDir+name;
+   			IO.saveBitmap(img,destDir,name);
+   			return destPath;
+   	
+   		}catch(IOException e)
+   		{
+   			Log.d("liuna",e.toString());
+   			return null;
+   		}
+   		
+   	}
+   	      
+    public static  List<Integer>  getImagesFromResource()
+    {
+    	List<Integer> imageList = new ArrayList<Integer>();
+    	imageList.add(R.drawable.abc);
+    	//imageList.add(R.drawable.img0001);
+    	imageList.add(R.drawable.img0030);
+    	imageList.add(R.drawable.img0130);
+    	//imageList.add(R.drawable.img0200);
+    	//imageList.add(R.drawable.img0300);
+    	return imageList;
+    	
+    }
 	 
 }
 
