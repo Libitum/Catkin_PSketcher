@@ -1,4 +1,4 @@
-package catkin.util;
+package catkin.psketcher.util;
 
 import java.io.ByteArrayOutputStream;
 

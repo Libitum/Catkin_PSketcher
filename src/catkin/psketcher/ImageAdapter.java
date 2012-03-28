@@ -35,7 +35,6 @@ public class ImageAdapter extends BaseAdapter {
 
 		 Bitmap originalImage = BitmapFactory.decodeFile(filePath);
 		 ImageView imageView = new ImageView(mContext);
-		
 		 imageView.setImageBitmap(originalImage);
 		 imageView.setAdjustViewBounds(true);
 		 imageView.setLayoutParams(new Gallery.LayoutParams(
