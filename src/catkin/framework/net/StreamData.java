@@ -1,35 +1,32 @@
-package catkin.frame;
+package catkin.framework.net;
 
 import java.util.ArrayList;
 import java.util.List;
-import catkin.frame.EnumClass.Code;
-import catkin.frame.EnumClass.Device;
-import catkin.frame.EnumClass.Method;
+
+import catkin.framework.util.EnumClass;
+import catkin.framework.util.EnumClass.Device;
+import catkin.framework.util.EnumClass.Method;
+
 
 
 import android.util.Log;
 
-public class DataStream {
-	private Code CODE; //标志传输情况
-	private Method METHOD;
-	private String APPID;
+public class StreamData {
+
 	private ArrayList<String> HEAD=null;
 	private ArrayList<Object> BODY=null;
 	
 	
-	public DataStream(Method M, String id)
+	public StreamData(Method M, String id)
 	{
-		
 		Log.d("liuna","construct DataStream");
 		HEAD=new ArrayList<String>();
 		BODY=new ArrayList<Object>();
-		METHOD=M;
-		APPID=id;
 		HEAD.add("METHOD:"+M.toString());
 		HEAD.add("APPID:"+id);
 	}
 	
-	public DataStream()
+	public StreamData()
 	{
 		HEAD=new ArrayList<String>();
 		BODY=new ArrayList<Object>();
@@ -62,17 +59,16 @@ public class DataStream {
 				addValue(varName[i],varValue[i]);
 			}
 		}
-		
 		return true;
 	}
 
 	public boolean addFileInfo(Device from ,Device to, String url)
 	{
 		if(url!=null)
-		{
-		HEAD.add("FILE:"+url);
+		{	
 		HEAD.add("FROM:"+from.toString());
 		HEAD.add("TO:"+to.toString());
+		HEAD.add("FILE:"+url);
 		return true;
 		}
 		else
@@ -189,10 +185,12 @@ public class DataStream {
     	
     	 
     }
-
-    private String find(String name, String sourceString)
+/*
+ * 
+ */
+    private String find(String name, String headLine)
     {
-    	String s=sourceString.trim();
+    	String s=headLine.trim();
     	if(!s.startsWith(name))
     	{
     		return null;

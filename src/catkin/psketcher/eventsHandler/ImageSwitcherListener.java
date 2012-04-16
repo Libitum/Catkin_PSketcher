@@ -1,7 +1,7 @@
-package catkin.psketcher.massageListener;
+package catkin.psketcher.eventsHandler;
 
-import catkin.frame.FrameWork;
-import catkin.frame.EnumClass.Device;
+import catkin.framework.Framework;
+import catkin.framework.util.EnumClass.Device;
 import catkin.psketcher.PSketcherActivity;
 import catkin.psketcher.R;
 import catkin.psketcher.image.Sketcher;
@@ -27,7 +27,7 @@ public class ImageSwitcherListener implements OnClickListener
 {
 	
 	private int sign=1;
-	private FrameWork Fw;
+	private Framework Fw;
 	private Handler  handler;
 	private Dialog mDialog;
 	private Context mContext;
@@ -38,7 +38,7 @@ public class ImageSwitcherListener implements OnClickListener
 	{
 	  mActivity=mainActivity;
 	  mContext=mActivity.mContext;
-	  Fw=FrameWork.getInstance(mContext,this.toString());
+	  Fw=Framework.getInstance(mContext,mainActivity.getClass());
 	  mSwitcher=mActivity.mSwitcher;
 	}
 
@@ -67,7 +67,7 @@ public class ImageSwitcherListener implements OnClickListener
 				    Log.d("liuna", "Enter Thread");
 					if(Fw.judge(Device.CLOUD))
 					{	
-					 Log.d("liuna","positon:"+mActivity.position);
+					  Log.d("liuna","positon:"+mActivity.position);
 				      Bitmap img=dealPicture(mActivity.position);
 				      byte[]BitmapBytes=BytesBitmap.getBytes(img);
 				      Fw.putValue("BitmapBytes"+mActivity.position,BitmapBytes);
@@ -96,7 +96,7 @@ public class ImageSwitcherListener implements OnClickListener
 		                	{	
 		                	
 		                	mDialog.dismiss();
-		                	Log.d("liuna","path"); 	  
+
 		                	BitmapDrawable drawable=new BitmapDrawable(BytesBitmap.getBitmap((byte[])(msg.obj))); 
 		                	mSwitcher.setImageDrawable(drawable);
 		                	
@@ -138,7 +138,7 @@ public class ImageSwitcherListener implements OnClickListener
    private Bitmap dealPicture(int position)
 	{
 		 //Bitmap img = BitmapFactory.decodeFile(s);
-	     Log.d("liuna","position:"+mActivity.position);
+	     Log.d("liuna","正在处理的图片的position:"+mActivity.position);
 	     Bitmap img=BitmapFactory.decodeResource(mContext.getResources(),mActivity.resourceList.get(mActivity.position) );
 		 return Sketcher.toSketcher(img);	 
 	}

@@ -1,9 +1,8 @@
-package catkin.psketcher.massageListener;
+package catkin.psketcher.eventsHandler;
 
 import java.util.List;
 
 import catkin.psketcher.PSketcherActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageSwitcher;
@@ -31,7 +30,6 @@ public class AdapterViewListener implements AdapterView.OnItemClickListener
 		 * 获取当前要显示的Image的路径
 		 */
 		mActivity.position = position;
-		Log.i("A", String.valueOf(position));
 		/**
 		 * 设置当前要显示的Image的路径	 
 		 */

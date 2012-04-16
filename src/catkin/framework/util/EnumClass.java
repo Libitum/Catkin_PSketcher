@@ -1,4 +1,4 @@
-package catkin.frame;
+package catkin.framework.util;
 
 public class EnumClass {
 	public enum Method  //枚举可以直接获得对应字符串

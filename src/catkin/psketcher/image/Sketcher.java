@@ -24,8 +24,9 @@ public class Sketcher {
 		for(int i=0; i<w; i++){
 			for(int j=0; j<h; j++){
 				int gray;
+				int fenmu = Math.max(255 - Color.red(fgImg.getPixel(i, j)), 1);
 				gray = Math.min(Color.red(bgImg.getPixel(i, j)) * 255 
-						/ (256 - Color.red(fgImg.getPixel(i, j))),255);
+						/ fenmu, 255);
 				sketcherImg.setPixel(i, j, Color.rgb(gray, gray, gray));
 			}
 		}
@@ -110,7 +111,7 @@ public class Sketcher {
 	 * @return Bitmap of gauss image with gauss radius 5
 	 */
 	private static Bitmap gray2Gauss(final Bitmap img){
-		return Sketcher.gray2Gauss(img, 5);
+		return Sketcher.gray2Gauss(img, 1);
 	}
 	
 	

@@ -1,8 +1,9 @@
 package catkin.psketcher;
 
 import java.util.List;
-import catkin.psketcher.massageListener.AdapterViewListener;
-import catkin.psketcher.massageListener.ImageSwitcherListener;
+
+import catkin.psketcher.eventsHandler.AdapterViewListener;
+import catkin.psketcher.eventsHandler.ImageSwitcherListener;
 import catkin.psketcher.util.IO;
 import android.app.Activity;
 import android.content.Context;
@@ -25,7 +26,7 @@ public class PSketcherActivity extends Activity implements ViewFactory
 	public List<String> pathList;
 	public List<Integer>resourceList;
 	public ImageSwitcher mSwitcher;
-	public Integer position;            //保存当前图片文件路径
+	public Integer position=0;            //保存当前图片文件路径
 	public Context mContext;
 		 	
     @Override

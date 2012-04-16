@@ -46,7 +46,6 @@ public class ImageAdapter extends BaseAdapter {
 	public ImageView createThumbFromResource(int position) {
 
 		 ImageView imageView = new ImageView(mContext);
-		 Log.d("liuna","positon 的值是："+position);
 		 imageView.setImageResource(lis.get(position));
 		 imageView.setAdjustViewBounds(true);
 		 imageView.setLayoutParams(new Gallery.LayoutParams(

@@ -1,4 +1,4 @@
-package catkin.frame;
+package catkin.framework.net;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -6,26 +6,26 @@ import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.List;
-
-import catkin.frame.EnumClass.Device;
+import catkin.framework.util.EnumClass.Device;
 
 import android.util.Log;
 
 public class SocketHandler {
-	private  int port=9527;
+	
+	private  int port=NetInfo.port;
 	private  String ip=null;
 	
 	public SocketHandler(Device device)
 	{
 		if(device==Device.MOBILE)
-		this.ip="192.168.1.132";
+		this.ip=NetInfo.remoteIp;
 		else 
-		this.ip="127.0.0.1";
+		this.ip=NetInfo.localIp;
 	}
 	/*
 	 * 端口操作
 	 */
-	public DataStream processPort(DataStream data)
+	public StreamData handleSocket(StreamData data)
 	{
 		Log.d("liuna","Enter ProcessPort");
 		Socket socket = null;
@@ -37,7 +37,7 @@ public class SocketHandler {
 	     ObjectOutputStream outPut = new ObjectOutputStream(socket.getOutputStream());  //getOutputStream()  
 	     ObjectInputStream inPut = new ObjectInputStream(socket.getInputStream());  //socket.getInputStream()  
 	     writeStream(outPut,data); 
-	     DataStream in=readStream(inPut);
+	     StreamData in=readStream(inPut);
          socket.close();    //IOException	
 	     return in;
     
@@ -62,9 +62,9 @@ public class SocketHandler {
 	}
 	
 	/*
-	 * 写流
+	 * 写流操作
 	 */
-	private void writeStream(ObjectOutputStream out, DataStream data )throws Exception
+	private void writeStream(ObjectOutputStream out, StreamData data )throws Exception
     {
 		
     	Log.d("liuna","Enter writeStream");
@@ -88,12 +88,12 @@ public class SocketHandler {
     /*
      * 读流操作	
      */
-    private DataStream readStream(ObjectInputStream in) throws Exception 
+    private StreamData readStream(ObjectInputStream in) throws Exception 
 	{
     	
     	Log.d("liuna","Enter readStream");
     	try{
-		    	DataStream input=new DataStream();
+		    	StreamData input=new StreamData();
 		    	String s=null;
 		    	while((s=in.readLine()).length()>0&&s!=null)
 		    	{
@@ -125,5 +125,35 @@ public class SocketHandler {
     	}
     	
     }
-    		   
+  
+/*
+ * 检测中间件是否存在
+ */
+    @SuppressWarnings("finally")
+	public boolean testConnect()
+    {
+    	Log.d("liuna","Enter testConnect");
+		Socket socket = null;
+		try
+		{
+			
+	     InetAddress addr = InetAddress.getByName(ip); //UnknownHostException
+	     socket = new Socket(addr,port); //IOException 
+	     socket.close();                //只是检测对方这个端口有没有打开
+	     return true;
+	     
+		}catch(Exception e)
+		{
+			try
+			{
+				socket.close();
+				return false;
+			}
+			finally
+			{
+				return false;
+			}
+		    
+		}
+    }
 }
