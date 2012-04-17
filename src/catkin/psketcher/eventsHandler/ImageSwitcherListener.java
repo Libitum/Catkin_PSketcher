@@ -16,10 +16,12 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Handler;
 import android.os.Message;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Chronometer;
 import android.widget.ImageSwitcher;
 
 
@@ -33,6 +35,7 @@ public class ImageSwitcherListener implements OnClickListener
 	private Context mContext;
 	private ImageSwitcher mSwitcher;
 	private PSketcherActivity mActivity;
+	private  Chronometer chronometer;
 	
 	public ImageSwitcherListener(PSketcherActivity mainActivity)
 	{
@@ -55,7 +58,12 @@ public class ImageSwitcherListener implements OnClickListener
 		 * 显示等待图片
 		 */
 		showWaitingPicture(mContext, R.layout.loading_process_dialog_color);
-		
+	    //开始计时
+		Log.d("liuna","start 计时器");
+	    chronometer = (Chronometer) mDialog.findViewById(R.id.chronometer);
+		chronometer.setBase(SystemClock.elapsedRealtime());
+		chronometer.start();
+
 		/*
 		 * 创建一个线程用来处理图片
 		 */
@@ -94,29 +102,33 @@ public class ImageSwitcherListener implements OnClickListener
 		                 case 0:
 		                	try
 		                	{	
-		                	
-		                	mDialog.dismiss();
-
-		                	BitmapDrawable drawable=new BitmapDrawable(BytesBitmap.getBitmap((byte[])(msg.obj))); 
-		                	mSwitcher.setImageDrawable(drawable);
-		                	
+			                    chronometer.stop();
+			                    String dealTime=(String) chronometer.getText();
+			                	mDialog.dismiss();
+			                	BitmapDrawable drawable=new BitmapDrawable(BytesBitmap.getBitmap((byte[])(msg.obj))); 
+			                	mSwitcher.setImageDrawable(drawable);
+			                	showTimeDialog(dealTime);
 		                	}
 		                	catch(Exception e)
 		                	{
 		                		Log.d("liuna","Handler："+e.toString());
 		                 	}
+		                	finally
+		                	{
+		                		sign=1;
+		                	}
 		                	
 		                }
 		            }
 
 		        };
-		sign=1;
+		
 		}		
 	
 	/*
 	 * 显示等待动画
 	 */
-	public void showWaitingPicture(Context mContext, int layout)
+	private void showWaitingPicture(Context mContext, int layout)
 	{
 	    OnKeyListener keyListener = new OnKeyListener()
 	    {
@@ -130,7 +142,41 @@ public class ImageSwitcherListener implements OnClickListener
 	    mDialog.setOnKeyListener(keyListener);
 	    mDialog.show();
 	    mDialog.setContentView(layout);
+	        
 	}
+	/*
+	 * 显示耗费时间对话框
+	 */
+	  private void showTimeDialog(String time) 
+	  {
+		       AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+		       int sec=changeTosec(time);
+		       builder.setTitle("处理本图片所用时间为：").setMessage(sec+"秒")
+		               .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+		  
+		               @Override  
+		               public void onClick(DialogInterface dialog, int which) {
+		  
+		                    }
+		  
+		                  });
+		          AlertDialog dialog = builder.create();
+		          dialog.show();
+		          
+	 }
+	  /*
+	   * 将时间转化为秒
+	   */
+    private int changeTosec(String time)
+    {
+    	Log.d("time",time);
+    	String min=time.substring(0, 2);
+    	Log.d("min",min);
+    	String sec=time.substring(3, 5);
+    	Log.d("sec",sec);
+    	int result=Integer.parseInt(min)*60+Integer.parseInt(sec);
+    	return result;
+    }
 	
 	/*
 	 * 处理图片

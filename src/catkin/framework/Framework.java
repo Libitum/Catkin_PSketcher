@@ -16,7 +16,7 @@ public class Framework extends BaseFramework{
 	private Device appDevice;
 	private String appId=null;
 	private SocketHandler  socketHandler;
-	boolean IsRunMigrate=false;//标志这个应用是否要迁移执行
+	boolean IsBusExist=false;//标志这个应用是否要迁移执行
 	
 	/*
 	 * 单例机制,构造函数的参数是调用框架的应用的上下文环境和类字符串
@@ -40,6 +40,7 @@ public class Framework extends BaseFramework{
 		Log.d("liuna","appId:"+appId);	
 			
 		super.setSocketHandler(socketHandler);	
+		IsBusExist=isBusExist();
 	}	
 	
 	private static Framework fw=null;
@@ -59,10 +60,11 @@ public class Framework extends BaseFramework{
 	 */
 	public  boolean judge(Device PreferToRun )
 	{
-		IsRunMigrate=isContextFit(appDevice); //在每段代码要迁移前，都判断一下环境是否合适，最麻烦的就是出现有时合适有时不合适的情况
+		boolean IsRunMigrate=isContextFit(appDevice); //在每段代码要迁移前，都判断一下环境是否合适，最麻烦的就是出现有时合适有时不合适的情况
+		Log.d("liuna","IsBusExist="+IsBusExist);
 		Log.d("liuna","IsRunMigrate="+IsRunMigrate);
 		
-		if(PreferToRun==appDevice||!IsRunMigrate)
+		if(PreferToRun==appDevice||!IsBusExist||!IsRunMigrate)
 		{
 			return true;
 		}
@@ -81,7 +83,7 @@ public class Framework extends BaseFramework{
 		Log.d("liuna","Enter putValue");
 		BufferData bufferData=new BufferData(varName,varValue);
 		StreamData streamData=null;
-		if(IsRunMigrate)
+		if(IsBusExist)
 		{
 		    streamData=new StreamData(Method.PUT,appId);
 			streamData.addValue(varName, varValue);
@@ -98,7 +100,7 @@ public class Framework extends BaseFramework{
 		Log.d("liuna","Enter getValue");
 		BufferData bufferData=new BufferData(varName);
 		StreamData streamData=null;
-		if(IsRunMigrate)
+		if(IsBusExist)
 		{
 			streamData=new StreamData(Method.GET,appId);
 			streamData.addKey(varName);
@@ -113,7 +115,7 @@ public class Framework extends BaseFramework{
 		Log.d("liuna","Enter putValue");
 		BufferData bufferData=new BufferData(varName,varValue);
 		StreamData streamData=null;
-		if(IsRunMigrate)
+		if(IsBusExist)
 		{
 		    streamData=new StreamData(Method.PUT,appId);
 			streamData.addValue(varName, varValue);
@@ -129,7 +131,7 @@ public class Framework extends BaseFramework{
 		Log.d("liuna","Enter getValue");
 		BufferData bufferData=new BufferData(varName);
 		StreamData streamData=null;
-		if(IsRunMigrate)
+		if(IsBusExist)
 		{
 			streamData=new StreamData(Method.GET,appId);
 			streamData.addKey(varName);
@@ -143,7 +145,7 @@ public class Framework extends BaseFramework{
 		Log.d("liuna","Enter putFile");
 		BufferData bufferData=new BufferData(pathName,pathUrl);
 		StreamData streamData=null;
-		if(IsRunMigrate)
+		if(IsBusExist)
 		{
 			streamData=new StreamData(Method.PUT,appId);
 			if(appDevice==Device.CLOUD)
@@ -162,7 +164,7 @@ public class Framework extends BaseFramework{
 		Log.d("liuna","Enter getValue");
 		BufferData bufferData=new BufferData(pathName);
 		StreamData streamData=null;
-		if(IsRunMigrate)
+		if(IsBusExist)
 		{
 			streamData=new StreamData(Method.GET,appId);
 			streamData.addKey(pathName);
@@ -178,7 +180,7 @@ public class Framework extends BaseFramework{
     	Log.d("liuna","Enter putFile");
 		BufferData bufferData=new BufferData(pathName,pathUrl);
 		StreamData streamData=null;
-		if(IsRunMigrate)
+		if(IsBusExist)
 		{
 			streamData=new StreamData(Method.PUT,appId);
 			if(appDevice==Device.CLOUD)
@@ -196,7 +198,7 @@ public class Framework extends BaseFramework{
 		Log.d("liuna","Enter getValue");
 		BufferData bufferData=new BufferData(pathName);
 		StreamData streamData=null;
-		if(IsRunMigrate)
+		if(IsBusExist)
 		{
 			streamData=new StreamData(Method.GET,appId);
 			streamData.addKey(pathName);
@@ -207,10 +209,13 @@ public class Framework extends BaseFramework{
 		
     }
 	
-
+	boolean isBusExist()
+	{
+		return socketHandler.testConnect();
+	}
 	 private boolean isContextFit(Device appDevice)
 	 {
-		 return socketHandler.testConnect();
+		 return true;
 		   
 	 }
 }
