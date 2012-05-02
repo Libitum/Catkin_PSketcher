@@ -1,6 +1,5 @@
 package catkin.framework;
 
-import android.R.bool;
 import android.util.Log;
 import catkin.framework.buffer.Buffer;
 import catkin.framework.buffer.BufferData;
@@ -75,7 +74,7 @@ class BaseFramework {
    protected StreamData getFromSocket(StreamData data)
    {
 	    Log.d("liuna","getFromSocket");
-	    int ConnectTimes=7;
+	    int ConnectTimes=5;
 		//long interval=3000;//3毫秒
 		try
 		{
@@ -113,7 +112,7 @@ class BaseFramework {
 	   }
    }
 
-   protected boolean put(BufferData bufferData,StreamData streamData )
+   protected boolean put(BufferData bufferData,StreamData streamData ) 
    {
 	  boolean result=false;
 	  if(bufferData!=null)

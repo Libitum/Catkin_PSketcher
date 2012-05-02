@@ -143,8 +143,8 @@ public class IO {
     	List<Integer> imageList = new ArrayList<Integer>();
     	imageList.add(R.drawable.abc);
     	//imageList.add(R.drawable.img0001);
-    	imageList.add(R.drawable.img0030);
-    	imageList.add(R.drawable.img0130);
+    	imageList.add(R.drawable.big);
+    	imageList.add(R.drawable.small);
     	//imageList.add(R.drawable.img0200);
     	//imageList.add(R.drawable.img0300);
     	return imageList;

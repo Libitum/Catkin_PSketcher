@@ -3,7 +3,6 @@ package catkin.framework;
 import catkin.framework.buffer.BufferData;
 import catkin.framework.net.SocketHandler;
 import catkin.framework.net.StreamData;
-import catkin.framework.util.EnumClass.Code;
 import catkin.framework.util.EnumClass.Device;
 import catkin.framework.util.EnumClass.Method;
 import android.content.Context;

@@ -3,7 +3,6 @@ package catkin.framework.buffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import android.util.Log;
 
 public class Buffer {
 	private HashMap<String,Object> buffer=null;
@@ -14,10 +13,10 @@ public class Buffer {
 	{
     	buffer=new  HashMap<String,Object>();
 	}
-	private static Buffer bf=null;
+	private static Buffer bf=new Buffer();
 	public synchronized static Buffer getInstance()
 	{
-		return new Buffer();
+	   return bf;
 	}
 	
    /*

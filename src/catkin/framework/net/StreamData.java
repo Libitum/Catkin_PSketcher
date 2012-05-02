@@ -3,7 +3,6 @@ package catkin.framework.net;
 import java.util.ArrayList;
 import java.util.List;
 
-import catkin.framework.util.EnumClass;
 import catkin.framework.util.EnumClass.Device;
 import catkin.framework.util.EnumClass.Method;
 

@@ -5,8 +5,6 @@ import java.util.ArrayList;
  * 封装存储到buffer中的数据
  */
 
-import android.util.Log;
-
 public class BufferData {
 	
 	    private ArrayList<String> key=null;
